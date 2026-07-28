@@ -1,0 +1,2 @@
+# fullStackOpen
+For learning purposes.
