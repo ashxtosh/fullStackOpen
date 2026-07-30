@@ -35,6 +35,8 @@ sequenceDiagram
     browser ->> server:  POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa <br>{"content":"ashx was here","date":"2026-07-28T16:58:38.335Z"}
     
     activate server
-    server-->>browser: javascript file
+    server-->>browser: Status Code: 201 Created (Response: {"message":"note created"})
     deactivate server
+
+    Note right of browser: The browser re-renders the note list on the page
 ```

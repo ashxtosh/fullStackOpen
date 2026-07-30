@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# editor
+.vscode/
+
+# scratch / practice code
+randoms/
+
+# compiled C++ binaries
+*.out
