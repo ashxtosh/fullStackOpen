@@ -25,7 +25,7 @@ const App = () => {
 
   const addDetails = (event) => {
     event.preventDefault()
-    const nameObj = { name: newName, number: newNum }
+    const nameObj = { name: newName, number: newNum, id: persons.length + 1 }
     // const duplicate = persons.find(person => person.name === newName)
     // if(duplicate) console.log("duplicate")
     const isDupli = persons.some((person) => person.name === newName)
