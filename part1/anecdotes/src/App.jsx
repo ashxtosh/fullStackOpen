@@ -33,7 +33,7 @@ const App = () => {
     setVotes(copy);
   };
 
-  console.log(votes[maxVoteIdx]);
+  
   return (
     <div>
       <Heading1 text="Anecdote of the day" />
