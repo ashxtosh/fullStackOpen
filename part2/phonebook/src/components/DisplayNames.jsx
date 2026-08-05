@@ -1,4 +1,4 @@
-const DisplayNames = ({ persons, filter }) => {
+const DisplayNames = ({ persons, filter, removeEntry }) => {
 
   const newPersons = persons.filter((person)=> {
     const currName = person.name.toLowerCase()
@@ -10,6 +10,7 @@ const DisplayNames = ({ persons, filter }) => {
   return newPersons.map((person) => (
     <p key={person.id}>
       {person.name} {person.number}
+      <button onClick={() => removeEntry(person.id, person.name)} >Delete</button>
     </p>
   ))
 }

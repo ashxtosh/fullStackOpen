@@ -1,20 +1,29 @@
-import { useState } from "react"
-import SearchFilter from "./components/SearchFilter"
+import { useState, useEffect} from "react"
+import personService from "./services/persons"
 
+import SearchFilter from "./components/SearchFilter"
 import DisplayNames from "./components/DisplayNames"
 import FillForm from "./components/FillForm"
 
+
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ])
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState("")
   const [newNum, setNewNum] = useState("")
   const [filter, setFilter] = useState("")
+
+  const hook = () => {
+    personService
+    .getAll()
+    .then(initialList => {
+      setPersons(initialList)
+    })
+  }
+
+  useEffect(hook, [])
+
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -25,16 +34,47 @@ const App = () => {
 
   const addDetails = (event) => {
     event.preventDefault()
-    const nameObj = { name: newName, number: newNum, id: persons.length + 1 }
-    // const duplicate = persons.find(person => person.name === newName)
-    // if(duplicate) console.log("duplicate")
-    const isDupli = persons.some((person) => person.name === newName)
-    if (isDupli) alert(`${newName} is already present in phonebook`)
-    else {
-      setPersons(persons.concat(nameObj))
-      setNewName("")
-      setNewNum("")
+    const nameObj = { name: newName, number: newNum }
+    const dupli = persons.find((person) => person.name === newName)
+
+    if (dupli) {
+      if(!window.confirm(`${newName} already present, replace the old no. with the new one?`)) return;
+      personService
+      .update(dupli.id, { ...dupli, number: newNum })
+      .then(returnedObj => {
+        setPersons(persons.map(person => 
+          person.id === dupli.id? returnedObj : person
+        ))
+        setNewName("")
+        setNewNum("")
+      })
+
     }
+    else {
+      console.log("Starting post")
+      personService
+      .create(nameObj)
+      .then(returnedObj => {
+        console.log("Processing post")
+        setPersons(persons.concat(returnedObj))
+        setNewName("")
+        setNewNum("")
+      })
+      console.log("Ending post")
+    }
+  }
+
+  const removeEntry = (id, name) => {
+    if(!window.confirm(`Delete ${name}?`)) return
+
+    personService
+    .remove(id)
+    .then(() => {
+      console.log("Processing delete")
+      setPersons(persons.filter(p => p.id !== id))
+      console.log("Deleted.")
+    })
+    
   }
 
   return (
@@ -44,7 +84,7 @@ const App = () => {
       <h2>Add a new</h2>
       <FillForm addDetails={addDetails} newName={newName} newNum={newNum} handleNameChange={handleNameChange} handleNumChange={handleNumChange}/>
       <h2>Numbers</h2>
-      <DisplayNames persons={persons} filter={filter} />
+      <DisplayNames persons={persons} filter={filter} removeEntry={removeEntry}/>
     </div>
   )
 }
